@@ -43,43 +43,31 @@ fun Main(navController: NavController) {
     PokedexScaffold(
         title = "Pokedex",
         content = { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(
-                        top = innerPadding.calculateTopPadding() + 16.dp,
-                        bottom = 16.dp,
-                        start = 16.dp,
-                        end = 16.dp
+            MaterialText(
+                text = "Welcome to Pokedex!",
+                modifier = Modifier.fillMaxWidth()
+            )
+            if (isLoading && pokemonList.isEmpty()) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .align(Alignment.CenterHorizontally)
                     )
-            ) {
-                MaterialText(
-                    text = "Welcome to Pokedex!",
-                    modifier = Modifier.fillMaxWidth()
+                }
+            } else {
+                SimpleList(
+                    items = pokemonList,
+                    onLoadMore = { pokemonViewModel.fetchPokemonList() },
+                    listState = listState,
+                    isLoading = isLoading,
+                    onItemClick = { id -> navController.navigate("details/$id") }
                 )
-                if (isLoading && pokemonList.isEmpty()) {
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .align(Alignment.CenterHorizontally)
-                        )
-                    }
-                } else {
-                    SimpleList(
-                        items = pokemonList,
-                        onLoadMore = { pokemonViewModel.fetchPokemonList() },
-                        listState = listState,
-                        isLoading = isLoading,
-                        onItemClick = { id -> navController.navigate("details/$id") }
+                if (isLoading && pokemonList.isNotEmpty()) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .padding(16.dp)
                     )
-                    if (isLoading && pokemonList.isNotEmpty()) {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .align(Alignment.CenterHorizontally)
-                        )
-                    }
                 }
             }
         }
