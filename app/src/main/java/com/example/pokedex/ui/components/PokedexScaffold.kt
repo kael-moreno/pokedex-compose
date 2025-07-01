@@ -8,6 +8,8 @@ import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.navigation.NavController
+import com.example.pokedex.extensions.addDefaultBack
 import androidx.compose.material3.Text as MaterialText
 import com.example.pokedex.ui.theme.MdRed800
 import com.example.pokedex.ui.theme.White
@@ -17,7 +19,8 @@ import com.example.pokedex.ui.theme.White
 fun PokedexScaffold(
     modifier: Modifier = Modifier,
     title: String,
-    navigationIcon: (@Composable (() -> Unit))? = null,
+    hasNavigationIcon: Boolean = false,
+    navController: NavController? = null,
     containerColor: Color = White,
     content: @Composable (PaddingValues) -> Unit
 ) {
@@ -26,7 +29,9 @@ fun PokedexScaffold(
         containerColor = containerColor,
         topBar = {
             CenterAlignedTopAppBar(
-                navigationIcon = navigationIcon ?: {},
+                navigationIcon = {
+                    if (hasNavigationIcon) addDefaultBack(navController)
+                },
                 colors = TopAppBarColors(
                     containerColor = MdRed800,
                     titleContentColor = White,
