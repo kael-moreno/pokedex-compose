@@ -1,6 +1,7 @@
 package com.example.pokedex.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.pokedex.data.PokemonListResult
 import com.example.pokedex.extensions.getImageLoader
@@ -35,7 +37,7 @@ import kotlin.getValue
 import androidx.compose.material3.Text as MaterialText
 
 @Composable
-fun Main() {
+fun Main(navController: NavController) {
     val pokemonViewModel: PokemonViewModel = hiltViewModel()
     val pokemonList = pokemonViewModel.pokemonList.collectAsState().value
     val isLoading by pokemonViewModel::isLoading
@@ -86,7 +88,8 @@ fun Main() {
                     items = pokemonList,
                     onLoadMore = { pokemonViewModel.fetchPokemonList() },
                     listState = listState,
-                    isLoading = isLoading
+                    isLoading = isLoading,
+                    onItemClick = { id -> navController.navigate("details/$id") }
                 )
                 if (isLoading && pokemonList.isNotEmpty()) {
                     CircularProgressIndicator(
@@ -101,13 +104,20 @@ fun Main() {
 }
 
 @Composable
-fun SimpleList(items: List<PokemonListResult>, onLoadMore: () -> Unit, listState: LazyListState, isLoading: Boolean = false) {
+fun SimpleList(
+    items: List<PokemonListResult>,
+    onLoadMore: () -> Unit,
+    listState: LazyListState,
+    isLoading: Boolean = false,
+    onItemClick: (Int) -> Unit
+) {
     LazyColumn(state = listState) {
         itemsIndexed(items) { index, item ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp, horizontal = 0.dp),
+                    .padding(vertical = 4.dp, horizontal = 0.dp)
+                    .clickable { onItemClick(item.id) },
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
                 Row(
@@ -148,3 +158,4 @@ fun SimpleList(items: List<PokemonListResult>, onLoadMore: () -> Unit, listState
         }
     }
 }
+
