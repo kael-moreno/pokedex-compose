@@ -15,6 +15,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -40,37 +42,49 @@ class MainActivity : ComponentActivity() {
                     composable("home") {
                         Main(navController)
                     }
-                    composable(
+                    navigateWithTransition(
                         "details/{id}",
-                        enterTransition = {
-                            fadeIn(
-                                animationSpec = tween(
-                                    300, easing = LinearEasing
-                                )
-                            ) + slideIntoContainer(
-                                animationSpec = tween(300, easing = EaseIn),
-                                towards = AnimatedContentTransitionScope.SlideDirection.Start
-                            )
-                        },
-                        exitTransition = {
-                            fadeOut(
-                                animationSpec = tween(
-                                    300, easing = LinearEasing
-                                )
-                            ) + slideOutOfContainer(
-                                animationSpec = tween(300, easing = EaseOut),
-                                towards = AnimatedContentTransitionScope.SlideDirection.End
-                            )
+                        onNavigate = { backStackEntry ->
+                            val id = backStackEntry.arguments?.getString("id")
+                            DetailsScreen(id, navController)
                         }
-
-                    ) { backStackEntry ->
-                        val id = backStackEntry.arguments?.getString("id")
-                        DetailsScreen(id, navController)
-                    }
+                    )
                 }
             }
         }
     }
+}
+
+fun NavGraphBuilder.navigateWithTransition(
+    route: String,
+    onNavigate: @Composable (NavBackStackEntry) -> Unit
+) {
+    composable(
+        route,
+        enterTransition = {
+            fadeIn(
+                animationSpec = tween(
+                    300, easing = LinearEasing
+                )
+            ) + slideIntoContainer(
+                animationSpec = tween(300, easing = EaseIn),
+                towards = AnimatedContentTransitionScope.SlideDirection.Start
+            )
+        },
+        exitTransition = {
+            fadeOut(
+                animationSpec = tween(
+                    300, easing = LinearEasing
+                )
+            ) + slideOutOfContainer(
+                animationSpec = tween(300, easing = EaseOut),
+                towards = AnimatedContentTransitionScope.SlideDirection.End
+            )
+        },
+        content = { backStackEntry ->
+            onNavigate(backStackEntry)
+        }
+    )
 }
 
 @Preview(showBackground = true)
