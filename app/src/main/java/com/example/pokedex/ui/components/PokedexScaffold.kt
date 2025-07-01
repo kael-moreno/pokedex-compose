@@ -1,0 +1,43 @@
+package com.example.pokedex.ui.components
+
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.material3.Text as MaterialText
+import com.example.pokedex.ui.theme.MdRed800
+import com.example.pokedex.ui.theme.White
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PokedexScaffold(
+    modifier: Modifier = Modifier,
+    title: String,
+    navigationIcon: (@Composable (() -> Unit))? = null,
+    containerColor: Color = White,
+    content: @Composable (PaddingValues) -> Unit
+) {
+    Scaffold(
+        modifier = modifier,
+        containerColor = containerColor,
+        topBar = {
+            CenterAlignedTopAppBar(
+                navigationIcon = navigationIcon ?: {},
+                colors = TopAppBarColors(
+                    containerColor = MdRed800,
+                    titleContentColor = White,
+                    scrolledContainerColor = White,
+                    navigationIconContentColor = White,
+                    actionIconContentColor = White
+                ),
+                title = { MaterialText (title) }
+            )
+        },
+        content = content
+    )
+}
+

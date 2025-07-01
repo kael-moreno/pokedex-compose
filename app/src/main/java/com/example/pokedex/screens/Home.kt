@@ -14,11 +14,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -29,10 +25,9 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.pokedex.data.PokemonListResult
 import com.example.pokedex.extensions.getImageLoader
-import com.example.pokedex.ui.theme.MdRed800
 import com.example.pokedex.ui.theme.MdTeal500
-import com.example.pokedex.ui.theme.White
 import com.example.pokedex.viewmodel.PokemonViewModel
+import com.example.pokedex.ui.components.PokedexScaffold
 import kotlin.getValue
 import androidx.compose.material3.Text as MaterialText
 
@@ -45,62 +40,50 @@ fun Main(navController: NavController) {
 
     pokemonViewModel.fetchPokemonList()
 
-    Scaffold(
-        modifier = Modifier.fillMaxWidth(),
-        topBar = {
-            @OptIn(ExperimentalMaterial3Api::class)
-            CenterAlignedTopAppBar(
-                colors = TopAppBarColors(
-                    containerColor = MdRed800,
-                    titleContentColor = White,
-                    scrolledContainerColor = White,
-                    navigationIconContentColor = White,
-                    actionIconContentColor = White
-                ),
-                title = { MaterialText("Pokedex") }
-            )
-        }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    top = innerPadding.calculateTopPadding() + 16.dp,
-                    bottom = 16.dp,
-                    start = 16.dp,
-                    end = 16.dp
-                )
-        ) {
-            MaterialText(
-                text = "Welcome to Pokedex!",
-                modifier = Modifier.fillMaxWidth()
-            )
-            if (isLoading && pokemonList.isEmpty()) {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .align(Alignment.CenterHorizontally)
+    PokedexScaffold(
+        title = "Pokedex",
+        content = { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(
+                        top = innerPadding.calculateTopPadding() + 16.dp,
+                        bottom = 16.dp,
+                        start = 16.dp,
+                        end = 16.dp
                     )
-                }
-            } else {
-                SimpleList(
-                    items = pokemonList,
-                    onLoadMore = { pokemonViewModel.fetchPokemonList() },
-                    listState = listState,
-                    isLoading = isLoading,
-                    onItemClick = { id -> navController.navigate("details/$id") }
+            ) {
+                MaterialText(
+                    text = "Welcome to Pokedex!",
+                    modifier = Modifier.fillMaxWidth()
                 )
-                if (isLoading && pokemonList.isNotEmpty()) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .align(Alignment.CenterHorizontally)
+                if (isLoading && pokemonList.isEmpty()) {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .align(Alignment.CenterHorizontally)
+                        )
+                    }
+                } else {
+                    SimpleList(
+                        items = pokemonList,
+                        onLoadMore = { pokemonViewModel.fetchPokemonList() },
+                        listState = listState,
+                        isLoading = isLoading,
+                        onItemClick = { id -> navController.navigate("details/$id") }
                     )
+                    if (isLoading && pokemonList.isNotEmpty()) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .align(Alignment.CenterHorizontally)
+                        )
+                    }
                 }
             }
         }
-    }
+    )
 }
 
 @Composable
