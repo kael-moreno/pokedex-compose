@@ -4,47 +4,22 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pokedex.data.PokemonListResult
 import com.example.pokedex.data.PokemonRepository
+import com.example.pokedex.data.PokemonPagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import kotlinx.coroutines.delay
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import javax.inject.Inject
 
 @HiltViewModel
 class PokemonViewModel @Inject constructor(
     private val repository: PokemonRepository
 ) : ViewModel() {
-    private val _pokemonList = MutableStateFlow<List<PokemonListResult>>(emptyList())
-    val pokemonList: StateFlow<List<PokemonListResult>> = _pokemonList
-
-    var isLoading by mutableStateOf(false)
-        private set
-
-    private var offset = 0
-    private val pageSize = 20
-    private var endReached = false
-
-    fun fetchPokemonList() {
-        if (isLoading || endReached) return
-        viewModelScope.launch {
-            isLoading = true
-            try {
-                val newPokemons = repository.getPokemonList(pageSize, offset)
-                if (newPokemons.isEmpty()) {
-                    endReached = true
-                } else {
-                    _pokemonList.value = _pokemonList.value + newPokemons
-                    offset += pageSize
-                }
-            } catch (e: Exception) {
-                // Optionally handle error
-            } finally {
-                isLoading = false
-            }
-        }
-    }
+    val pagingPokemonList: Flow<PagingData<PokemonListResult>> = Pager(
+        config = PagingConfig(pageSize = 20, enablePlaceholders = false),
+        pagingSourceFactory = { PokemonPagingSource(repository) }
+    ).flow
 }
