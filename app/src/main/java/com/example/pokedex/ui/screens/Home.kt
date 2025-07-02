@@ -2,6 +2,7 @@ package com.example.pokedex.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,8 +10,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Snackbar
@@ -31,13 +38,17 @@ import com.example.pokedex.viewmodel.PokemonViewModel
 import com.example.pokedex.ui.components.PokedexScaffold
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.LazyPagingItems
+import com.example.pokedex.ui.theme.MdGrey50
+import com.example.pokedex.ui.theme.MdGrey600
+import com.example.pokedex.ui.theme.MdLightBlue900
+import com.example.pokedex.ui.theme.White
 import androidx.compose.material3.Text as MaterialText
 
 @Composable
 fun Main(navController: NavController) {
     val pokemonViewModel: PokemonViewModel = hiltViewModel()
     val pagingPokemonList = pokemonViewModel.pagingPokemonList.collectAsLazyPagingItems()
-    val listState = rememberLazyListState()
+    val listState = rememberLazyGridState()
 
     PokedexScaffold(
         title = "Pokedex",
@@ -54,19 +65,30 @@ fun Main(navController: NavController) {
 @Composable
 fun SimplePagingList(
     items: LazyPagingItems<PokemonListResult>,
-    listState: LazyListState,
+    listState: LazyGridState,
     onItemClick: (Int) -> Unit
 ) {
-    LazyColumn(state = listState) {
+    LazyVerticalGrid(
+        state = listState,
+        columns = GridCells.Fixed(2),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
         items(items.itemCount) { index ->
             val item = items[index]
             if (item != null) {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 4.dp, horizontal = 0.dp)
                         .clickable { onItemClick(item.id) },
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                    shape = RoundedCornerShape(4.dp),
+                    colors = CardColors(
+                        containerColor = MdLightBlue900,
+                        contentColor = MdLightBlue900,
+                        disabledContainerColor = MdGrey600,
+                        disabledContentColor = MdGrey600
+                    )
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -82,11 +104,18 @@ fun SimplePagingList(
                             contentDescription = item.name,
                             modifier = Modifier.size(48.dp)
                         )
-                        MaterialText(
-                            text = item.name.replaceFirstChar { it.uppercase() },
-                            color = MdTeal500,
-                            modifier = Modifier.padding(start = 16.dp)
-                        )
+                        Column {
+                            MaterialText(
+                                text = "#${item.id}",
+                                color = White,
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
+                            MaterialText(
+                                text = item.name.replaceFirstChar { it.uppercase() },
+                                color = White,
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
+                        }
                     }
                 }
             }
