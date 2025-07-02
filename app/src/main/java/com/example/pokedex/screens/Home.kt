@@ -14,12 +14,16 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.paging.LoadState
 import coil.compose.rememberAsyncImagePainter
 import com.example.pokedex.data.PokemonListResult
 import com.example.pokedex.extensions.getImageLoader
@@ -95,7 +99,7 @@ fun SimplePagingList(
         }
         item {
             when (items.loadState.append) {
-                is androidx.paging.LoadState.Loading -> {
+                is LoadState.Loading -> {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         CircularProgressIndicator(
                             modifier = Modifier
@@ -104,8 +108,19 @@ fun SimplePagingList(
                         )
                     }
                 }
-                is androidx.paging.LoadState.Error -> {
-                    // Optionally show error UI
+                is LoadState.Error -> {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Snackbar(
+                            modifier = Modifier.padding(16.dp),
+                            action = {
+                                TextButton(onClick = { items.retry() }) {
+                                    Text("Retry")
+                                }
+                            }
+                        ) {
+                            Text("Failed to load more Pokémon.")
+                        }
+                    }
                 }
                 else -> {}
             }
