@@ -1,10 +1,9 @@
-package com.example.pokedex.screens
+package com.example.pokedex.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -32,7 +31,6 @@ import com.example.pokedex.viewmodel.PokemonViewModel
 import com.example.pokedex.ui.components.PokedexScaffold
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.LazyPagingItems
-import kotlin.getValue
 import androidx.compose.material3.Text as MaterialText
 
 @Composable
@@ -44,10 +42,6 @@ fun Main(navController: NavController) {
     PokedexScaffold(
         title = "Pokedex",
         content = { innerPadding ->
-            MaterialText(
-                text = "Welcome to Pokedex!",
-                modifier = Modifier.fillMaxWidth()
-            )
             SimplePagingList(
                 items = pagingPokemonList,
                 listState = listState,

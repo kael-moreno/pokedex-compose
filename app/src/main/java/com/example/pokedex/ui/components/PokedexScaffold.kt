@@ -3,9 +3,11 @@ package com.example.pokedex.ui.components
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarColors
@@ -15,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.pokedex.extensions.addDefaultBack
+import com.example.pokedex.ui.theme.Black
 import androidx.compose.material3.Text as MaterialText
 import com.example.pokedex.ui.theme.MdRed800
 import com.example.pokedex.ui.theme.White
@@ -51,14 +54,23 @@ fun PokedexScaffold(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(
-                        top = innerPadding.calculateTopPadding() + 16.dp,
-                        bottom = 16.dp,
-                        start = 16.dp,
-                        end = 16.dp
-                    )
             ) {
-                content(innerPadding)
+                HorizontalDivider(
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(
+                            top = innerPadding.calculateTopPadding(),
+                        ),
+
+                    thickness = 2.dp,
+                    color = Black
+                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 16.dp)
+                ) {
+                    content(innerPadding)
+                }
             }
         }
     )

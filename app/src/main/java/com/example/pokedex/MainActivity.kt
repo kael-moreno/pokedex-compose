@@ -20,8 +20,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.pokedex.screens.Main
-import com.example.pokedex.screens.DetailsScreen
+import com.example.pokedex.ui.screens.Main
+import com.example.pokedex.ui.screens.DetailsScreen
 import com.example.pokedex.ui.theme.PokedexTheme
 import dagger.hilt.android.AndroidEntryPoint
 

@@ -7,4 +7,6 @@ class PokemonRepository
     private val api: PokeApiService
 ) {
     suspend fun getPokemonList(limit: Int, offset: Int) = api.getPokemonList(limit, offset).results
+
+    suspend fun getPokemonDetail(id: String) = api.getPokemonDetail(id)
 }
