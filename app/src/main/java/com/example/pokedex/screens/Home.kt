@@ -39,6 +39,7 @@ fun Main() {
     val pokemonViewModel: PokemonViewModel = hiltViewModel()
     val pokemonList = pokemonViewModel.pokemonList.collectAsState().value
     val isLoading by pokemonViewModel::isLoading
+    val error by pokemonViewModel::error
     val listState = rememberLazyListState()
 
     pokemonViewModel.fetchPokemonList()
@@ -86,7 +87,8 @@ fun Main() {
                     items = pokemonList,
                     onLoadMore = { pokemonViewModel.fetchPokemonList() },
                     listState = listState,
-                    isLoading = isLoading
+                    isLoading = isLoading,
+                    error = error
                 )
                 if (isLoading && pokemonList.isNotEmpty()) {
                     CircularProgressIndicator(
@@ -101,7 +103,13 @@ fun Main() {
 }
 
 @Composable
-fun SimpleList(items: List<PokemonListResult>, onLoadMore: () -> Unit, listState: LazyListState, isLoading: Boolean = false) {
+fun SimpleList(
+    items: List<PokemonListResult>,
+    onLoadMore: () -> Unit,
+    listState: LazyListState,
+    isLoading: Boolean = false,
+    error: Exception? = null,
+) {
     LazyColumn(state = listState) {
         itemsIndexed(items) { index, item ->
             Card(
@@ -139,6 +147,19 @@ fun SimpleList(items: List<PokemonListResult>, onLoadMore: () -> Unit, listState
             item {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     CircularProgressIndicator(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                }
+            }
+        }
+        if (error != null) {
+            item {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    MaterialText(
+                        text = "An error occurred while loading data.",
+                        color = MdRed800,
                         modifier = Modifier
                             .padding(16.dp)
                             .align(Alignment.CenterHorizontally)

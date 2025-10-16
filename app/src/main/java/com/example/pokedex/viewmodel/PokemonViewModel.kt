@@ -1,5 +1,6 @@
 package com.example.pokedex.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pokedex.data.PokemonListResult
@@ -24,6 +25,9 @@ class PokemonViewModel @Inject constructor(
     var isLoading by mutableStateOf(false)
         private set
 
+    var error by mutableStateOf<Exception?>(null)
+        private set
+
     private var offset = 0
     private val pageSize = 20
     private var endReached = false
@@ -32,6 +36,7 @@ class PokemonViewModel @Inject constructor(
         if (isLoading || endReached) return
         viewModelScope.launch {
             isLoading = true
+            error = null
             try {
                 val newPokemons = repository.getPokemonList(pageSize, offset)
                 if (newPokemons.isEmpty()) {
@@ -42,6 +47,9 @@ class PokemonViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 // Optionally handle error
+                Log.e("PokemonViewModel", "Error fetching Pokémon list", e)
+                error = e
+                endReached = true
             } finally {
                 isLoading = false
             }
